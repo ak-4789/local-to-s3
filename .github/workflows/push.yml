@@ -3,7 +3,8 @@ name : local_To_S3
 on : push
 
 env:
-  BUCKET_NAME: "akhil-dev-bucket"
+  ENV : "dev"
+  #BUCKET_NAME: "akhil-dev-bucket"
   AWS_REGION: "us-east-1"
   AWS_ROLE: "arn:aws:iam::266735840247:role/aws-oidc-github-role"
 
@@ -32,4 +33,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Upload to S3
         run: |
-          aws s3 cp ./test.txt s3://${{ env.BUCKET_NAME }}/tableau/tableau_artifacts/
+          aws s3 cp ./test.txt s3://akhil-${{ env.ENV }}-bucket/tableau/tableau_artifacts/
+      - name: Clean Up files
+        run: |
+          echo "Removed the files from GH branch!"
