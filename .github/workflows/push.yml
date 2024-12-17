@@ -1,0 +1,35 @@
+name : local_To_S3
+
+on : push
+
+env:
+  BUCKET_NAME: "akhil-dev-bucket"
+  AWS_REGION: "us-east-1"
+  AWS_ROLE: "arn:aws:iam::266735840247:role/aws-oidc-github-role"
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+#inputs:
+#  bucket:
+#    description: 'Bucket Name'
+#    required: true
+#  bucket-region:
+#    description: 'Bucket Region'
+#    required: true
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code  
+        uses: actions/checkout@v2
+      - name: Get AWS permissions
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Upload to S3
+        run: |
+          aws s3 cp ./test.txt s3://${{ env.BUCKET_NAME }}/tableau/tableau_artifacts/
